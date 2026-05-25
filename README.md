@@ -79,6 +79,25 @@ $env:DEDUPE_API_URL="https://httpbin.org/anything"
 mvn spring-boot:run
 ```
 
+### Run fully offline with the built-in stub
+
+If you don't have (or don't want) an external Bureau / Dedupe URL, activate the
+`local-stub` profile. The app then exposes `POST /stub/bureau` and
+`POST /stub/dedupe` inside the same JVM, and auto-points
+`BUREAU_API_URL` / `DEDUPE_API_URL` at itself — no external calls, no SSL,
+no env vars to set:
+
+```powershell
+$env:DB_USER="root"; $env:DB_PASS="<your-mysql-pwd>"
+$env:SPRING_PROFILES_ACTIVE="local-stub"
+mvn spring-boot:run
+```
+
+Or as Eclipse VM arguments: `-Dspring.profiles.active=local-stub`.
+
+The stub controller is **only created when the `local-stub` profile is active**
+(`@Profile("local-stub")`), so it never ships to production.
+
 MySQL setup (run once):
 ```sql
 CREATE DATABASE coe_cache;
